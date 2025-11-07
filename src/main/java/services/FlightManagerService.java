@@ -1,0 +1,107 @@
+/*package services;
+
+import dto.MaletaAFacturarVol;
+import dto.VolBajarMaletas;
+import dto.VolRequest;
+import exceptions.AvioNotFoundException;
+import exceptions.VolNotFoundException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import io.swagger.annotations.Api;
+import manager.FlightManager;
+import manager.FlightManagerImpl;
+import models.Avio;
+import models.Maleta;
+
+import java.util.List;
+
+@Api(value = "/flight", description = "Endpoint to Flight Services")
+@Path("/flight")
+public class FlightManagerService {
+    private FlightManager fm;
+
+    public FlightManagerService(){
+        this.fm = FlightManagerImpl.getInstance();
+    }
+
+    @POST // <-- JERSEY: Usamos POST para CREAR un recurso
+    @Path("/avions") // <-- JERSEY: La URL es el recurso "aviones"
+    @ApiOperation(value = "Añadir o modificar un avión") // <-- SWAGGER
+    @ApiResponses(value = { // <-- SWAGGER
+            @ApiResponse(code = 201, message = "Avión añadido/modificado", response = Avio.class)
+    })
+    @Consumes(MediaType.APPLICATION_JSON) // <-- JERSEY: Le dice que espere un JSON
+    @Produces(MediaType.APPLICATION_JSON) // <-- JERSEY: Devuelve un JSON
+    public Response addAvio(Avio avio) { // <-- ¡PARÁMETRO CLAVE!
+        fm.addAvio(avio.getIdAvio(), avio.getModel(), avio.getCompañia());
+        return Response.status(201).entity(avio).build();
+    }
+
+    @POST // <-- JERSEY: Usamos POST para CREAR un recurso
+    @Path("/vols") // <-- JERSEY: La URL es el recurso "aviones"
+    @ApiOperation(value = "Añadir o modificar un vol") // <-- SWAGGER
+    @ApiResponses(value = { // <-- SWAGGER
+            @ApiResponse(code = 201, message = "Vol añadido/modificado", response = VolRequest.class),
+            @ApiResponse(code = 404, message = "Avion no vivo", response = String.class)
+
+    })
+    @Consumes(MediaType.APPLICATION_JSON) // <-- JERSEY: Le dice que espere un JSON
+    @Produces(MediaType.APPLICATION_JSON) // <-- JERSEY: Devuelve un JSON
+    public Response addVol(VolRequest vr) { // <-- ¡PARÁMETRO CLAVE!
+        try{
+            fm.addVol(vr);
+            return Response.status(201).entity(vr).build();
+        }catch (AvioNotFoundException e){
+           return Response.status(404).entity("Error " + e).build();
+        }
+    }
+
+    @POST // <-- JERSEY: Usamos POST para CREAR un recurso
+    @Path("/facturar") // <-- JERSEY: La URL es el recurso "aviones"
+    @ApiOperation(value = "Añadir o modificar un vol") // <-- SWAGGER
+    @ApiResponses(value = { // <-- SWAGGER
+            @ApiResponse(code = 201, message = "Maleta en la bodega", response = Maleta.class),
+            @ApiResponse(code = 404, message = "Vol no vivo", response = String.class)
+
+    })
+    @Consumes(MediaType.APPLICATION_JSON) // <-- JERSEY: Le dice que espere un JSON
+    @Produces(MediaType.APPLICATION_JSON) // <-- JERSEY: Devuelve un JSON
+    public Response subirMaleta(MaletaAFacturarVol mf) { // <-- ¡PARÁMETRO CLAVE!
+        try{
+            Maleta maleta = fm.subirMaleta(mf);
+            return Response.status(201).entity(maleta).build();
+        }catch (VolNotFoundException e){
+            return Response.status(404).entity("Error " + e).build();
+        }
+    }
+//revisar
+    @GET
+    @ApiOperation(value = "Lista de maletas")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK", response = List.class, responseContainer = "List"),
+            @ApiResponse(code = 404, message = "Vol no vivo", response = String.class)
+    })
+    @Path("/maletas/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response bajarMaletas(@PathParam("id") Integer id){
+        VolBajarMaletas v = new VolBajarMaletas(id);
+        try{
+            List<Maleta> list = fm.bajarMaletas(v);
+            GenericEntity<List<Maleta>> entity = new GenericEntity<List<Maleta>>(list) {};
+            return Response.status(200).entity(entity).build();
+        }catch (VolNotFoundException e){
+            return Response.status(404).entity("Error " + e).build();
+        }
+
+    }
+
+
+
+}
