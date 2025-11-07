@@ -22,9 +22,6 @@ public class BibliotecaManagerImplTest {
         fm = null;
     }
 
-    // Los Ejemoplos (valor de atributos) estan creados con el IA --> por ejemplo new Lector("1", "Juan", "Perez", "12345678A", "2000-01-01", "Calle Mayor 1");
-    //Para mejor comprobacion de datos
-
     @Test
     public void testAñadirLector() {
         Lector lector = new Lector("1", "Juan", "Perez", "12345678A", "2000-01-01", "Calle Mayor 1");
@@ -255,4 +252,6 @@ public class BibliotecaManagerImplTest {
         Assert.assertEquals(2, prestecs1.size());
         Assert.assertEquals(2, prestecs2.size());
     }
+    // Los Ejemoplos (valor de atributos) estan creados con el IA --> por ejemplo new Lector("1", "Juan", "Perez", "12345678A", "2000-01-01", "Calle Mayor 1");
+    //Para mejor comprobacion de datos
 }
