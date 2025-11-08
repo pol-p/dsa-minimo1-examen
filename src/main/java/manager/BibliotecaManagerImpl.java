@@ -119,13 +119,7 @@ public class BibliotecaManagerImpl implements BibliotecaManager {
         }
 
         Llibre llibreACatalogar = primeraPila.pop();
-        LlibreCatalogat llibreExistent = null;
-        for (LlibreCatalogat lc : mapLlibresCatalogats.values()) {
-            if (lc.getLlibreCatalogat().getIsbn().equals(llibreACatalogar.getIsbn())) {
-                llibreExistent = lc;
-                break;
-            }
-        }
+        LlibreCatalogat llibreExistent = this.mapLlibresCatalogats.get(llibreACatalogar.getIsbn());
         if (llibreExistent != null) {
             llibreExistent.incrementarExemplars();
             LOGGER.info("Llibre ya catalogado, ejemplars incrementats: " + llibreExistent);
